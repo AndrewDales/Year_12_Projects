@@ -1,8 +1,8 @@
 import tkinter as tk
 
 
-class TestGUI(tk.Frame):
-    """ TestGUI is a simple single frame tkinter app demonstrating setting up a button and binding a key press"""
+class RegistrationFrame(tk.Frame):
+    """ RegistrationFrame displays a typical registration form"""
 
     def __init__(self, parent):
         super().__init__(parent)
@@ -28,7 +28,7 @@ class TestGUI(tk.Frame):
         self.edits = [tk.Entry(self, width=40, font=('Arial', 12))
                       for _ in range(2)]
 
-        # Frame with gender choices
+        # Frame with gender choices - radio buttons
         self.gender_frame = GenderRadioBox(self)
 
         # Country dropdown
@@ -36,6 +36,9 @@ class TestGUI(tk.Frame):
         self.country_var.set("select your country")
         self.country_select = tk.OptionMenu(self, self.country_var, *country_options)
         self.country_select.config(width=20, anchor='w', font=('Arial', 12))
+
+        # Frame with programs check boxes
+        self.program_frame = ProgramCheckBox(self)
 
         # Place the widgets in the grid
         self.place_widgets()
@@ -60,32 +63,63 @@ class TestGUI(tk.Frame):
         # Place drop-down window
         self.country_select.grid(row=4, column=1, padx=10, pady=3, sticky="w")
 
+        # Place the Programs frame
+        self.program_frame.grid(row=5, column=1, padx=10, pady=3, sticky="w")
+
 
 class GenderRadioBox(tk.Frame):
     def __init__(self, parent):
         super().__init__(parent)
 
-        selected_gender = tk.StringVar()
-        # selected_gender.set('O')
-
         gender_values = [('Male', 'M'),
                          ('Female', 'F'),
-                         ('Other', 'O')]
+                         ('Others', 'O')]
+
+        self.selected_gender = tk.StringVar()
+        self.selected_gender.set('O')
 
         self.radio_options = [tk.Radiobutton(self, text=option[0],
                                              value=option[1],
-                                             variable=selected_gender,
+                                             variable=self.selected_gender,
+                                             command=self.radio_select,
                                              font=('Arial', 12))
                               for option in gender_values]
 
         for ro in self.radio_options:
             ro.pack(side=tk.LEFT)
 
+    def radio_select(self):
+        print(f'You selected {self.selected_gender.get()}')
+
+
+class ProgramCheckBox(tk.Frame):
+    def __init__(self, parent):
+        super().__init__(parent)
+
+        options = ["C++", "Java", "JavaScript", "Python"]
+        self.program_options = list(zip(options, [tk.IntVar() for _ in options]))
+
+        self.cb_options = [tk.Checkbutton(self, text=option[0],
+                                          variable=option[1],
+                                          font=('Arial', 12),
+                                          command=self.cb_select
+                                          )
+                           for option in self.program_options]
+
+        for cb in self.cb_options:
+            cb.pack(side=tk.LEFT)
+
+    def cb_select(self):
+        chosen_options = [option[0] for option in self.program_options if option[1].get()]
+        if any(chosen_options):
+            print(f'You selected the programs: {", ".join(chosen_options)}')
+        else:
+            print(f'You selected no programs')
+
 
 if __name__ == "__main__":
     root = tk.Tk()
-    #  root.geometry('600x400+100+100')
     root.title('Registration Form')
     root.resizable(1, 0)
-    TestGUI(root).pack(fill=tk.BOTH, expand=True)
+    RegistrationFrame(root).pack(fill=tk.BOTH, expand=True)
     root.mainloop()
