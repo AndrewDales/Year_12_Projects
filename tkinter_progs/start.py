@@ -17,7 +17,8 @@ class TestGUI(tk.Frame):
         self.sld = tk.Scale(self,
                             from_=0,
                             to=100,
-                            orient='vertical')
+                            orient='vertical',
+                            command=self.print_value)
         self.place_widgets()
 
     def place_widgets(self):
@@ -32,6 +33,8 @@ class TestGUI(tk.Frame):
         self.rowconfigure(0,weight=1)
         self.rowconfigure(1,weight=2)
 
+    def print_value(self, event):
+        print(self.sld.get())
 
 if __name__ == '__main__':
     root = tk.Tk()
